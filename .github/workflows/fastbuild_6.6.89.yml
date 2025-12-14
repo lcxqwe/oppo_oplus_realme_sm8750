@@ -377,16 +377,14 @@ jobs:
       - name: 应用 HYMOFS 补丁
         if: inputs.HYMOFS_enable
         run: |
-          cd kernel_workspace
-       if [[ ${{ github.event.inputs.susfs_enable }} ]]; then
-          wget https://raw.githubusercontent.com/Anatdx/HymoFS/refs/heads/main/patch/hymofs_with_susfs.patch
-          patch -p1 -F 3 < hymofs_with_susfs.patch
-          echo "CONFIG_HYMOFS=y" >> ./arch/arm64/configs/gki_defconfig # Write to defconfig
-       else
-           wget https://raw.githubusercontent.com/Anatdx/HymoFS/refs/heads/main/patch/hymofs.patch
-           patch -p1 -F 3 < hymofs.patch
-           echo "CONFIG_HYMOFS=y" >> ./arch/arm64/configs/gki_defconfig
-       fi
+          cd kernel_workspace/common
+          if [[ "${{ github.event.inputs.susfs_enable }}" == 'true' ]]; then
+            wget https://raw.githubusercontent.com/Anatdx/HymoFS/refs/heads/main/patch/hymofs_with_susfs.patch
+            patch -p1 -F 3 < hymofs_with_susfs.patch
+          else
+            wget https://raw.githubusercontent.com/Anatdx/HymoFS/refs/heads/main/patch/hymofs.patch
+            patch -p1 -F 3 < hymofs.patch
+          fi
           echo "CONFIG_HYMOFS=y" >> ./arch/arm64/configs/gki_defconfig
       - name: 应用lz4 1.10.0 & zstd 1.5.7补丁
         if: inputs.lz4_enable
